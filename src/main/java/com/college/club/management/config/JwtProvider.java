@@ -26,7 +26,7 @@ public class JwtProvider {
 	
 	static SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes());
 	public String generateToken(String username) throws UserNotFound {
-        Map<String, Object> claims = Map.of("roles", rootAdminServices.findUserByUsername(username).getRoles()); 
+        Map<String, Object> claims = Map.of("roles", rootAdminServices.findUserByUsername(username).getRoles().stream().map(role-> Map.of("name",role.getName())).toList()); 
         return createToken(claims, username);
         }
 
@@ -52,7 +52,10 @@ public class JwtProvider {
     
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        return claims.get("roles", List.class); // Assuming roles are stored as a List of strings in the JWT claims
+        List<Map<String, String>> rolesMap = claims.get("roles", List.class);
+        return rolesMap.stream()
+                .map(role -> role.get("name"))
+                .toList();
     }
 
     

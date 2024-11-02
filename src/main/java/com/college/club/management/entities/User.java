@@ -1,5 +1,6 @@
 package com.college.club.management.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.NonNull;
 
@@ -37,10 +39,10 @@ public class User implements UserDetails{
 	private String password;
 	@DBRef
 	private Set <Role> roles;
-	private String clubId;
+	
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+	@JsonIgnore
+	public Collection<? extends GrantedAuthority> getAuthorities(){
+		return new ArrayList<GrantedAuthority>();
 	}
 }

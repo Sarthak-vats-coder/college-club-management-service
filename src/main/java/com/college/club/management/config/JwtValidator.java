@@ -21,25 +21,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 @Component
-public class JwtValidator extends OncePerRequestFilter{
-	
+public class JwtValidator extends OncePerRequestFilter {
+
 	JwtProvider jwtProvider;
 	UserRepository userRepository;
 
-	public JwtValidator(JwtProvider jwtProvider, 
-			UserRepository userRepository) {
+	public JwtValidator(JwtProvider jwtProvider, UserRepository userRepository) {
 		this.jwtProvider = jwtProvider;
 		this.userRepository = userRepository;
 
 	}
 
-	
-	private Cookie getAuthCookie(HttpServletRequest request) {
-		if(request==null || request.getCookies().length==0 || request.getCookies()[0].getValue()== null) return null;
+	public Cookie getAuthCookie(HttpServletRequest request) {
+		if (request == null || request.getCookies() == null || request.getCookies().length == 0
+				|| request.getCookies()[0].getValue() == null)
+			return null;
+
 		Cookie[] cookies = request.getCookies();
-		for(Cookie cookie : cookies) {
-			if(cookie.getName().equals("auth_token")) return cookie;
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("auth_token"))
+				return cookie;
 		}
 		return null;
 	}
@@ -47,38 +50,34 @@ public class JwtValidator extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
-		
+
 		Cookie authCookie = getAuthCookie(request);
-		
-		if(authCookie==null) {
+
+		if (authCookie == null) {
+			System.out.println("you don't have cookie");
 			filterChain.doFilter(request, response);
 			return;
 		}
-		
+		System.out.println("You seem to have cookie, so lets check");
 		final String jwt = authCookie.getValue();
 		String username = jwtProvider.extractUsername(jwt);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
+
 		if (username != null && authentication == null) {
 			Optional<User> user = userRepository.findByUsername(username);
 			if (user.isPresent() && jwtProvider.validateToken(jwt, username)) {
-				var authorities = user.get().getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toList());
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-					user.get(), 
-					null, 
-					authorities);
+				var authorities = user.get().getRoles().stream()
+						.map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())).collect(Collectors.toList());
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.get(),
+						null, authorities);
 
-			authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContextHolder.getContext().setAuthentication(authToken);
+				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
 		}
-		
 
 		filterChain.doFilter(request, response);
 
 	}
-
-	
 
 }

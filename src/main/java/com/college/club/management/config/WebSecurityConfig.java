@@ -19,59 +19,46 @@ import jakarta.servlet.http.HttpServletRequest;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-	
+
 	private final AuthenticationProvider authenticationProvider;
-    private final JwtValidator jwtValidator;
+	private final JwtValidator jwtValidator;
 
-    public WebSecurityConfig(
-        JwtValidator jwtTokenValidator,
-        AuthenticationProvider authenticationProvider
-    ) {
-        this.authenticationProvider = authenticationProvider;
-        this.jwtValidator = jwtTokenValidator;
-    }
-	
-
+	public WebSecurityConfig(JwtValidator jwtTokenValidator, AuthenticationProvider authenticationProvider) {
+		this.authenticationProvider = authenticationProvider;
+		this.jwtValidator = jwtTokenValidator;
+	}
 
 	@Bean
 	@Primary
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity
-			.csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(
-					authorize -> authorize
-		            .requestMatchers("/api/auth/**").permitAll()
-		            .requestMatchers("/admin/**").hasRole("ROOT_ADMIN")
-		            .requestMatchers("/club/**").hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN")
-		            .requestMatchers("/view/**").hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN", "USER")
-		            .anyRequest().authenticated())
-			.authenticationProvider(authenticationProvider)
-			.addFilterBefore(jwtValidator, UsernamePasswordAuthenticationFilter.class)
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.build();
+		return httpSecurity.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/auth/**").permitAll()
+						.requestMatchers("/admin/**").hasRole("ROOT_ADMIN").requestMatchers("/club/**")
+						.hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN").requestMatchers("/user/**")
+						.hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN", "USER").requestMatchers("/swagger-ui/**").permitAll()
+						.requestMatchers("/v3/api-docs/**").permitAll().anyRequest().authenticated())
+				.authenticationProvider(authenticationProvider)
+				.addFilterBefore(jwtValidator, UsernamePasswordAuthenticationFilter.class)
+				.cors(cors -> cors.configurationSource(corsConfigurationSource())).build();
 	}
-	
-	private CorsConfigurationSource corsConfigurationSource() { 
-        return new CorsConfigurationSource() { 
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) { 
-                CorsConfiguration ccfg = new CorsConfiguration(); 
-                ccfg.setAllowedOrigins(Arrays.asList(
-                		"http://localhost:3000",
-                		"http://127.0.0.1:3000",
-                		"http://localhost:1025",
-                		"http://127.0.0.1:1025")); 
-                ccfg.setAllowedMethods(Collections.singletonList("*")); 
-                ccfg.setAllowCredentials(true); 
-                ccfg.setAllowedHeaders(Collections.singletonList("*")); 
-                ccfg.setMaxAge(3600L); 
-              
-                return ccfg; 
-                
-  
-            } 
-        }; 
-        
+
+	private CorsConfigurationSource corsConfigurationSource() {
+		return new CorsConfigurationSource() {
+			@Override
+			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+				CorsConfiguration ccfg = new CorsConfiguration();
+				ccfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000",
+						"http://localhost:1025", "http://127.0.0.1:1025"));
+				ccfg.setAllowedMethods(Collections.singletonList("*"));
+				ccfg.setAllowCredentials(true);
+				ccfg.setAllowedHeaders(Collections.singletonList("*"));
+				ccfg.setMaxAge(3600L);
+
+				return ccfg;
+
+			}
+		};
+
 	}
-  
+
 }

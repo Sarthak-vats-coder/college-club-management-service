@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.stereotype.Service;
 
 import com.college.club.management.config.JwtProvider;
 import com.college.club.management.entities.Role;
@@ -22,10 +22,9 @@ import com.college.club.management.response.AuthResponse;
 import com.college.club.management.services.AuthServices;
 import com.college.club.management.services.RootAdminServices;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-
+@Service
 public class AuthServiceImpl implements AuthServices {
 	UserRepository userRepository;
 	RoleRepository roleRepository;
@@ -33,15 +32,16 @@ public class AuthServiceImpl implements AuthServices {
 	RootAdminServices rootAdminServices;
 	JwtProvider jwtProvider;
 
-	public AuthServiceImpl(JwtProvider jwtProvider,PasswordEncoder passwordEncoder, UserRepository userRepository,RoleRepository roleRepository) {
+	public AuthServiceImpl(JwtProvider jwtProvider,PasswordEncoder passwordEncoder, UserRepository userRepository,RoleRepository roleRepository,RootAdminServices rootAdminServices) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
 		this.jwtProvider = jwtProvider;
+		this.rootAdminServices = rootAdminServices;
 	}
 
 	@Override
-	public User createUser(@RequestBody User user) throws Exception {
+	public User createUser(User user) throws Exception {
 		 Optional<Role> userRoleOptional = roleRepository.findByName("USER");
 		    
 		    Role userRole;
@@ -60,14 +60,15 @@ public class AuthServiceImpl implements AuthServices {
 		}
 		
 		User newUser = new User();
-		newUser.setPassword(user.getPassword());
+		newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		newUser.setUsername(user.getUsername());
 		newUser.setRoles(Collections.singleton(userRole));
+		System.out.print("created");
 		return (userRepository.save(newUser));
 	}
 
 	@Override
-	public ResponseEntity<AuthResponse> signIn(@RequestBody  SignInRequest signInRequest, HttpServletResponse response)
+	public ResponseEntity<AuthResponse> signIn(SignInRequest signInRequest, HttpServletResponse response)
 			throws UserNotFound {
 		String username = signInRequest.getUsername();
 		User user = rootAdminServices.findUserByUsername(username);
