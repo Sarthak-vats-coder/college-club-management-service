@@ -12,4 +12,5 @@ public class Club {
     private String name;
     private String description;
     private String ownerId; 
+    private byte[] profilePicture;
 }

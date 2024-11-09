@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/college-club-management-backend-service/static/css/main.113f0ad6.css",
+    "main.js": "/college-club-management-backend-service/static/js/main.f40bc70a.js",
+    "static/media/profile.png": "/college-club-management-backend-service/static/media/profile.9c431beb8bafd541be2b.png",
+    "static/media/sass.png": "/college-club-management-backend-service/static/media/sass.abf75ac53a2fac5f5445.png",
+    "static/media/bgIMG.png": "/college-club-management-backend-service/static/media/bgIMG.c39101e520e2997fc6d4.png",
+    "static/media/bgWhite.png": "/college-club-management-backend-service/static/media/bgWhite.79658cadae50b3b16ee5.png",
+    "static/media/flutter.png": "/college-club-management-backend-service/static/media/flutter.55f52aa5b9c7e0c78c41.png",
+    "static/media/redux.png": "/college-club-management-backend-service/static/media/redux.9e0dcfe56aa9a712cbda.png",
+    "static/media/logo.png": "/college-club-management-backend-service/static/media/logo.db322a3b5978a5875f84.png",
+    "static/media/mobile.png": "/college-club-management-backend-service/static/media/mobile.145d9ce0157a56f8fcd8.png",
+    "static/media/email.png": "/college-club-management-backend-service/static/media/email.37b9e890eea501421fbf.png",
+    "static/media/figma.png": "/college-club-management-backend-service/static/media/figma.152e55329b6f1915967e.png",
+    "index.html": "/college-club-management-backend-service/index.html",
+    "static/media/circle.svg": "/college-club-management-backend-service/static/media/circle.ae5f84b3853b9e34aa83cf8dada715c5.svg",
+    "main.113f0ad6.css.map": "/college-club-management-backend-service/static/css/main.113f0ad6.css.map",
+    "main.f40bc70a.js.map": "/college-club-management-backend-service/static/js/main.f40bc70a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.113f0ad6.css",
+    "static/js/main.f40bc70a.js"
+  ]
+}

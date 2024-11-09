@@ -35,10 +35,15 @@ public class User implements UserDetails{
 	@NonNull
 	private String username;
 	@NonNull
+	private String firstname;
+	@NonNull
+	private String lastname;
+	@NonNull
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 	@DBRef
 	private Set <Role> roles;
+	private byte[] profilePicture;
 	
 	@Override
 	@JsonIgnore

@@ -40,14 +40,14 @@ public class RootAdminServiceImpl implements RootAdminServices{
 
 	@Override
 	public List<User> getAllUser() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return userRepository.findAll();
 	}
 
 	@Override
 	public List<Club> getAllClub() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return clubRepository.findAll();
 	}
 	@Override
 	public Club findClubByOwnerId(String ownerId) throws ClubNotFound {

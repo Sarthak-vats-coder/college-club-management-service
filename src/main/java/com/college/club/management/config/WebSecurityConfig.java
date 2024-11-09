@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,12 +32,22 @@ public class WebSecurityConfig {
 	@Bean
 	@Primary
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ROOT_ADMIN").requestMatchers("/club/**")
-						.hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN").requestMatchers("/user/**")
-						.hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN", "USER").requestMatchers("/swagger-ui/**").permitAll()
-						.requestMatchers("/v3/api-docs/**").permitAll().anyRequest().authenticated())
+		return httpSecurity.csrf(csrf -> csrf.disable()).sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/auth/**").permitAll()
+						.requestMatchers("/view/**").permitAll()
+						.requestMatchers("/index.html").permitAll()
+						.requestMatchers("/favicon.ico").permitAll()
+						.requestMatchers("/").permitAll()
+						.requestMatchers("/static/**").permitAll()
+						.requestMatchers("/logs/**").permitAll()
+						.requestMatchers("/error").permitAll()
+						.requestMatchers("/admin/**").hasRole("ROOT_ADMIN")
+						.requestMatchers("/club/**").hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN")
+						.requestMatchers("/user/**").hasAnyRole("ROOT_ADMIN", "CLUB_ADMIN", "USER")
+						.requestMatchers("/swagger-ui/**").permitAll()
+						.requestMatchers("/v3/api-docs/**").permitAll()
+						.anyRequest().authenticated())
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtValidator, UsernamePasswordAuthenticationFilter.class)
 				.cors(cors -> cors.configurationSource(corsConfigurationSource())).build();

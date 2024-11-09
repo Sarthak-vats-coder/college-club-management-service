@@ -1,5 +1,6 @@
 package com.college.club.management.serviceImpl;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.college.club.management.config.JwtProvider;
 import com.college.club.management.entities.Role;
@@ -41,7 +43,7 @@ public class AuthServiceImpl implements AuthServices {
 	}
 
 	@Override
-	public User createUser(User user) throws Exception {
+	public User createUser(User user,MultipartFile profilePicture) throws Exception {
 		 Optional<Role> userRoleOptional = roleRepository.findByName("USER");
 		    
 		    Role userRole;
@@ -63,6 +65,13 @@ public class AuthServiceImpl implements AuthServices {
 		newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		newUser.setUsername(user.getUsername());
 		newUser.setRoles(Collections.singleton(userRole));
+		try {
+	        if (profilePicture != null && !profilePicture.isEmpty()) {
+	            newUser.setProfilePicture(profilePicture.getBytes());
+	        }
+	    } catch (IOException e) {
+	        throw new RuntimeException("Failed to save profile picture", e);
+	    }
 		System.out.print("created");
 		return (userRepository.save(newUser));
 	}
