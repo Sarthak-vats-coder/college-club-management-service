@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkcollege_club_management_ui=self.webpackChunkcollege_club_management_ui||[]).push([[802],{802:(e,l,u)=>{u.r(l),u.d(l,{default:()=>c});const c={}}}]);
+//# sourceMappingURL=802.9cca281f.chunk.js.map

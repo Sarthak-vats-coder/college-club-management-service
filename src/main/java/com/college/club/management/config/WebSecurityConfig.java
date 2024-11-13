@@ -38,7 +38,9 @@ public class WebSecurityConfig {
 						.requestMatchers("/view/**").permitAll()
 						.requestMatchers("/index.html").permitAll()
 						.requestMatchers("/favicon.ico").permitAll()
-						.requestMatchers("/").permitAll()
+						.requestMatchers("/login").permitAll()
+						.requestMatchers("/**").permitAll()
+//						.requestMatchers("/logo192.png").permitAll()
 						.requestMatchers("/static/**").permitAll()
 						.requestMatchers("/logs/**").permitAll()
 						.requestMatchers("/error").permitAll()
@@ -58,7 +60,7 @@ public class WebSecurityConfig {
 			@Override
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration ccfg = new CorsConfiguration();
-				ccfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000",
+				ccfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000","https://effervescent-starburst-4152d3.netlify.app/",
 						"http://localhost:1025", "http://127.0.0.1:1025"));
 				ccfg.setAllowedMethods(Collections.singletonList("*"));
 				ccfg.setAllowCredentials(true);

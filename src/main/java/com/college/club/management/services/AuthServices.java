@@ -14,6 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public interface AuthServices {
 	 User createUser(User user,MultipartFile profilePicture) throws Exception;
-	 ResponseEntity<AuthResponse> signIn(SignInRequest userRequest, HttpServletResponse response) throws UserNotFound;
-
+	 ResponseEntity<User> signIn(SignInRequest userRequest, HttpServletResponse response) throws UserNotFound;
+	 ResponseEntity<AuthResponse> logOut(HttpServletResponse response);
 }

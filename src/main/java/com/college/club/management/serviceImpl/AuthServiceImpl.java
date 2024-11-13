@@ -64,6 +64,8 @@ public class AuthServiceImpl implements AuthServices {
 		User newUser = new User();
 		newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		newUser.setUsername(user.getUsername());
+		newUser.setFirstname(user.getFirstname());
+		newUser.setLastname(user.getLastname());
 		newUser.setRoles(Collections.singleton(userRole));
 		try {
 	        if (profilePicture != null && !profilePicture.isEmpty()) {
@@ -77,7 +79,7 @@ public class AuthServiceImpl implements AuthServices {
 	}
 
 	@Override
-	public ResponseEntity<AuthResponse> signIn(SignInRequest signInRequest, HttpServletResponse response)
+	public ResponseEntity<User> signIn(SignInRequest signInRequest, HttpServletResponse response)
 			throws UserNotFound {
 		String username = signInRequest.getUsername();
 		User user = rootAdminServices.findUserByUsername(username);
@@ -94,11 +96,11 @@ public class AuthServiceImpl implements AuthServices {
 			AuthResponse authResponse = new AuthResponse();
 
 			Cookie jwtCookie = new Cookie("auth_token", token);
-			jwtCookie.setDomain("localhost");
+			jwtCookie.setDomain("");
 			jwtCookie.setPath("/");
 			jwtCookie.setMaxAge(24 * 3600);
-			jwtCookie.setAttribute("SameSite", "Lax");
-			jwtCookie.setSecure(false);
+			jwtCookie.setAttribute("SameSite", "None");
+			jwtCookie.setSecure(true);
 			jwtCookie.setHttpOnly(false);
 
 			response.addCookie(jwtCookie);
@@ -106,10 +108,29 @@ public class AuthServiceImpl implements AuthServices {
 			authResponse.setMessage("success");
 			authResponse.setJwt(token);
 
-			return new ResponseEntity<>(authResponse, HttpStatus.OK);
+			return new ResponseEntity<>(user, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+	}
+
+	@Override
+	public ResponseEntity<AuthResponse> logOut(HttpServletResponse response) {
+		AuthResponse authResponse = new AuthResponse();
+
+		Cookie jwtCookie = new Cookie("auth_token", "");
+		jwtCookie.setDomain("");
+		jwtCookie.setPath("/");
+		jwtCookie.setMaxAge(0);
+		jwtCookie.setAttribute("SameSite", "None");
+		jwtCookie.setSecure(true);
+		jwtCookie.setHttpOnly(false);
+
+		response.addCookie(jwtCookie);
+
+		authResponse.setMessage("success");
+		System.out.println("done");
+		return new ResponseEntity<>(authResponse,HttpStatus.OK);
 	}
 
 	

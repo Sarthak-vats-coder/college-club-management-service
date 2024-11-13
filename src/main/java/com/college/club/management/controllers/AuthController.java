@@ -19,6 +19,8 @@ import com.college.club.management.services.AuthServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+
 @RestController
 @RestControllerAdvice
 @RequestMapping("/auth")
@@ -38,10 +40,16 @@ public class AuthController {
 	}
 	
 	@PostMapping("/signIn")
-	public ResponseEntity<ResponseEntity<AuthResponse>> signIn(@RequestBody SignInRequest signInRequest,HttpServletResponse response) throws UserNotFound{
+	public ResponseEntity<ResponseEntity<User>> signIn(@RequestBody SignInRequest signInRequest,HttpServletResponse response) throws UserNotFound{
 		return ResponseEntity.ok(authServices.signIn(signInRequest, response));
 		
 	}
+	
+	@GetMapping("/logOut")
+	public ResponseEntity<ResponseEntity<AuthResponse>> logOut(HttpServletResponse response) {
+		return ResponseEntity.ok(authServices.logOut(response));
+	}
+	
 	
 
 }
